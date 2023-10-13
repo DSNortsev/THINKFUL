@@ -2,9 +2,9 @@ import React from "react";
 import {Route, Switch, useRouteMatch} from "react-router-dom";
 import DeckViewer from "./DeckViewer";
 import DeckStudy from "./DeckStudy";
-import DeckEditor from "./DeckEditor";
 import Cards from "./cards/Cards";
 import NotFound from "../common/NotFound";
+import DeckCreator from "./DeckCreator";
 
 
 function DeckDetails() {
@@ -20,7 +20,7 @@ function DeckDetails() {
                     <DeckStudy/>
                 </Route>
                 <Route exact path={`${path}/edit`}>
-                    <DeckEditor/>
+                    <DeckCreator/>
                 </Route>
                 <Route path={`${path}/cards`}>
                     <Cards/>

@@ -8,7 +8,7 @@ function Breadcrumb({items = []}) {
                 <li className="breadcrumb-item">
                     <Link to="/">Home</Link>
                 </li>
-                {items.map((item, index) => (
+                {items.filter(item => item.text).map((item, index) => (
                     item.link
                         ? <li key={index} className="breadcrumb-item">
                             <Link to={item.link}>{item.text}</Link>

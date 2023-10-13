@@ -5,7 +5,7 @@ import DeckDetails from "./DeckDetails";
 import NotFound from "../common/NotFound";
 
 function Deck() {
-    const {path, url} = useRouteMatch();
+    const {path} = useRouteMatch();
 
     return (
         <React.Fragment>

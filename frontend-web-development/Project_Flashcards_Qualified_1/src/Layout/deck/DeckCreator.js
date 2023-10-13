@@ -1,17 +1,32 @@
-import React, {useState} from "react";
-import {useHistory, useRouteMatch} from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {useHistory, useParams, useRouteMatch} from "react-router-dom";
 import Breadcrumb from "../common/Breadcrumb";
-import {createDeck} from "../../utils/api";
+import {createDeck, readDeck, updateDeck} from "../../utils/api";
 
 function DeckCreator() {
-    const {path, url} = useRouteMatch();
+    const {deckId} = useParams();
+    const {url} = useRouteMatch();
     const history = useHistory();
-    const initalForm = {name: '', description: ''}
-    const [formData, setFormData] = useState({name: '', description: ''});
+    const initialForm = {name: "", description: ""}
+    const [deck, setDeck] = useState(initialForm);
+    const [formData, setFormData] = useState(initialForm);
     const breadcrumbItems = [
-        {text: 'Create Deck'},
+        {text: deck.name, link: `/decks/${deckId}`},
+        {text: deckId ? 'Edit Deck' : 'Create Deck'},
     ];
     const [error, setError] = useState(undefined);
+
+    useEffect(() => {
+        if (deckId) {
+            const abortController = new AbortController();
+            readDeck(deckId, abortController.signal).then((deck) => {
+                setDeck(deck);
+                setFormData({name: deck.name, description: deck.description})
+            }).catch(setError);
+
+            return () => abortController.abort();
+        }
+    }, [deckId]);
 
     const handleChange = ({target}) => {
         setFormData({
@@ -21,21 +36,36 @@ function DeckCreator() {
     };
 
     const handleCancel = () => {
-        setFormData(initalForm);
+        setFormData({name: deck.name, description: deck.description});
         setError(undefined);
-        history.push("/");
+        if (deckId) {
+            history.push(`/decks/${deckId}`);
+        } else {
+            history.push("/");
+        }
     };
 
     const handleSubmit = (event) => {
         event.preventDefault();
         const abortController = new AbortController();
-        createDeck(formData, abortController.signal).then((newDeck) => {
-            setError(undefined);
-            history.push(`/decks/${newDeck.id}`);
-        }).catch((error) => {
-            setError(error);
-            history.push('/decks/new');
-        });
+        if (deckId) {
+            updateDeck({...formData, id: deckId}, abortController.signal).then((newDeck) => {
+                setError(undefined);
+                history.push(`/decks/${deckId}`);
+            }).catch((error) => {
+                setError(error);
+                history.push(`${url}`);
+            });
+        } else {
+            createDeck(formData, abortController.signal).then((newDeck) => {
+                setError(undefined);
+                history.push(`/decks/${newDeck.id}`);
+            }).catch((error) => {
+                setError(error);
+                history.push('/decks/new');
+            });
+        }
+
     };
 
 
@@ -44,12 +74,12 @@ function DeckCreator() {
             <Breadcrumb items={breadcrumbItems}/>
             {error && (
                 <div className="alert alert-danger" role="alert">
-                    Failed to create new deck!
+                    Failed to {deckId ? 'edit' : 'create'} deck!
                 </div>
             )}
             {!error && (
                 <div>
-                    <h2>Create Deck</h2>
+                    <h2>{deckId ? 'Edit' : 'Create'} Deck</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="mb-3">
                             <label htmlFor="name" className="form-label">Name</label>

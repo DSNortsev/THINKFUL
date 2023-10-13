@@ -8,7 +8,6 @@ import Card from "./cards/Card";
 function DeckViewer() {
     const {deckId} = useParams();
     const history = useHistory();
-    const location = useLocation();
     const {url} = useRouteMatch();
     const [deck, setDeck] = useState({cards: []});
     const [error, setError] = useState(undefined);
@@ -21,7 +20,7 @@ function DeckViewer() {
         readDeck(deckId, abortController.signal).then(setDeck).catch(setError);
 
         return () => abortController.abort();
-    }, [location.key]);
+    }, []);
 
     const handleDeleteDeck = (id) => {
         const isConfirmed = window.confirm('Delete this deck?\n\nYou will not be able to recover it.');

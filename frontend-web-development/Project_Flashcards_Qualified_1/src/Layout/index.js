@@ -3,11 +3,10 @@ import Header from "./common/Header";
 import NotFound from "./common/NotFound";
 import Deck from "./deck/Deck";
 import DeckList from "./home/DeckList";
-import {Route, Switch, useRouteMatch} from "react-router-dom";
+import {Route, Switch} from "react-router-dom";
 
 
 function Layout() {
-    const {path, url} = useRouteMatch();
 
     return (
         <React.Fragment>
