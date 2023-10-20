@@ -2,18 +2,19 @@ import React, {useEffect, useState} from "react";
 import {useHistory, useParams, useRouteMatch} from "react-router-dom";
 import Breadcrumb from "../../common/Breadcrumb";
 import CardForm from "./CardForm";
-import {createCard, readDeck} from "../../../utils/api";
+import {readCard, readDeck, updateCard} from "../../../utils/api";
 
-function CardCreator() {
-    const {deckId} = useParams();
+function CardEditor() {
+    const {deckId, cardId} = useParams();
     const {url} = useRouteMatch();
     const history = useHistory();
     const initialForm = {front: '', back: ''}
     const [deck, setDeck] = useState({});
+    const [card, setCard] = useState({});
     const [formData, setFormData] = useState(initialForm);
     const breadcrumbItems = [
-            {text: deck?.name, link: `/decks/${deckId}`},
-            {text: 'Add Card'}
+            {text: `Deck ${deck.name}`, link: `/decks/${deckId}`},
+            {text: `Edit Card ${cardId}`}
     ];
     const [error, setError] = useState(undefined);
 
@@ -23,8 +24,13 @@ function CardCreator() {
             setDeck(deck);
         }).catch(setError);
 
+        readCard(cardId, abortController.signal).then((card) => {
+            setCard(card);
+            setFormData({front: card.front, back: card.back})
+        }).catch(setError);
+
         return () => abortController.abort();
-    }, [deckId]);
+    }, [cardId]);
 
     const handleChange = ({target}) => {
         setFormData({
@@ -41,14 +47,13 @@ function CardCreator() {
     const handleSubmit = (event) => {
         event.preventDefault();
         const abortController = new AbortController();
-        createCard(deckId, formData, abortController.signal).then((newDeck) => {
-            setFormData(initialForm);
-            setError(undefined);
-            history.push(`${url}`);
-        }).catch((error) => {
-            setError(error);
-            history.push(`${url}`);
-        });
+            updateCard({...formData, id: card.id, deckId: deck.id}, abortController.signal).then(() => {
+                setError(undefined);
+                history.push(`/decks/${deckId}`);
+            }).catch((error) => {
+                setError(error);
+                history.push(`${url}`);
+            });
     };
 
 
@@ -56,19 +61,19 @@ function CardCreator() {
         <React.Fragment>
             <Breadcrumb items={breadcrumbItems}/>
             {error ? (
-                <div className="alert alert-danger" role="alert">
-                    Failed to create new card!
-                </div>
-            ) :
-            <CardForm
-                edit={false}
-                formData={formData}
-                handleFormCancel={handleCancel}
-                handleFormChange={handleChange}
-                handleFormSubmit={handleSubmit}
-            />}
+                    <div className="alert alert-danger" role="alert">
+                        Failed to edit card!
+                    </div>
+                ) :
+                <CardForm
+                    edit={true}
+                    formData={formData}
+                    handleFormCancel={handleCancel}
+                    handleFormChange={handleChange}
+                    handleFormSubmit={handleSubmit}
+                />}
         </React.Fragment>
     );
 }
 
-export default CardCreator;
+export default CardEditor;

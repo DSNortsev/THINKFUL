@@ -4,7 +4,7 @@ import DeckViewer from "./DeckViewer";
 import DeckStudy from "./DeckStudy";
 import Cards from "./cards/Cards";
 import NotFound from "../common/NotFound";
-import DeckCreator from "./DeckCreator";
+import DeckEditor from "./DeckEditor";
 
 
 function DeckDetails() {
@@ -20,7 +20,7 @@ function DeckDetails() {
                     <DeckStudy/>
                 </Route>
                 <Route exact path={`${path}/edit`}>
-                    <DeckCreator/>
+                    <DeckEditor/>
                 </Route>
                 <Route path={`${path}/cards`}>
                     <Cards/>

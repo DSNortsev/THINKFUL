@@ -1,6 +1,7 @@
 import React from "react";
 import {Route, Switch, useRouteMatch} from "react-router-dom";
 import CardCreator from "./CardCreator";
+import CardEditor from "./CardEditor";
 import NotFound from "../../common/NotFound";
 
 function Cards() {
@@ -13,7 +14,7 @@ function Cards() {
                     <CardCreator/>
                 </Route>
                 <Route exact path={`${path}/:cardId/edit`}>
-                    <CardCreator/>
+                    <CardEditor/>
                 </Route>
                 <Route>
                     <NotFound/>
