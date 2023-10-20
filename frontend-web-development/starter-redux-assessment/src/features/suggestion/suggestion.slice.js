@@ -4,27 +4,16 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 export const fetchSuggestion =
   createAsyncThunk('suggestion/fetchSuggestion', async (_, { rejectedWithValue }) => {
       /* Task 15: Complete the `createAsyncThunk()` function to load a suggestion from this URL: http://localhost:3004/api/suggestion */
-        const baseUrl = 'http://localhost:3004/api/suggestion';
-      //   try {
-      //     const response = await axios.get(baseUrl);
-      //     return response.data;
-      //   } catch (error) {
-      //     return rejectedWithValue(error.message);
-      //   }
-      // }
-          try {
-              const response = await fetch(baseUrl);
+    const baseUrl = 'http://localhost:3004/api/suggestion';
+    const response = await fetch(baseUrl);
 
-              if(!response.ok) {
-                  throw new Error(`HTTP Error: ${response.status}`);
-              }
+    if (!response.ok) {
+      throw new Error(`HTTP Error: ${response.status}`);
+    }
 
-              const data = await response.json();
-              return data.data;
-          } catch (error) {
-              return error.message;
-          }
-      }
+    const data = await response.json();
+    return data.data;
+    }
   );
 
 const initialState = {
@@ -50,10 +39,10 @@ const options = {
            state.suggestion = action.payload;
        })
       builder
-          .addCase(fetchSuggestion.rejected, (state, action) => {
-              state.loading = false;
-              state.suggestion = action.payload;
-          })
+        .addCase(fetchSuggestion.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        })
   },
 };
 
