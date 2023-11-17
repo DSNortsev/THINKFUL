@@ -8,7 +8,9 @@ async function list(req, res) {
 
 function bodyDataHas(propertyName) {
   return function (req, res, next) {
+    console.log(req.body);
     const { data = {} } = req.body;
+    console.log(data);
     if (data[propertyName]) {
       return next();
     }
